@@ -6,6 +6,10 @@ function ElementBuilder(name) {
     return this
   }
 
+  this.getText = function () {
+    return this.element.textContent
+  }
+
   this.id = function (id) {
     this.element.type = id
     return this
@@ -95,6 +99,27 @@ function cardPro(username, imageurl) {
   return pro
 }
 
+function error(type) {
+  alert(`you already ${type} it`)
+}
+
+function click(operator, point, count) {
+  const n = +count.getText()
+  if (operator === 'like') {
+    if (n > point) {
+      error('like')
+      return
+    }
+    count.text(n + 1)
+  } else if (operator === 'dislike') {
+    if (n < point) {
+      error('dislike')
+      return
+    }
+    count.text(n - 1)
+  }
+}
+
 function cardPoints(point) {
   const points = builder
     .create('div')
@@ -103,7 +128,7 @@ function cardPoints(point) {
     .create('p')
     .text('Total Points: ')
     .appendTo(points)
-  builder
+  const count = builder
     .create('span')
     .className('count')
     .text(point)
@@ -112,11 +137,13 @@ function cardPoints(point) {
     .create('span')
     .className('like')
     .text('👍')
+    .onClick(() => click('like', point, count))
     .appendTo(p)
   builder
     .create('span')
     .className('dislike')
     .text('👎')
+    .onClick(() => click('dislike', point, count))
     .appendTo(p)
   return points
 }
