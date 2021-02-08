@@ -26,27 +26,12 @@ function ElementBuilder(name) {
     return this
   }
 
-  this.html = function (htmlvalue) {
-    this.element.innerHTML = htmlvalue
-    return this
-  }
-
-  this.value = function (value) {
-    this.element.value = value
-    return this
-  }
-
   this.appendTo = function (parent) {
     if (parent instanceof ElementBuilder) {
       parent.element.appendChild(this.element)
     } else {
       parent.appendChild(this.element)
     }
-    return this
-  }
-
-  this.placeHolder = function (text) {
-    this.element.placeholder = text
     return this
   }
 }
@@ -90,21 +75,84 @@ const comments = [
   },
 ]
 
+function cardPro(username, imageurl) {
+  const pro = builder
+    .create('div')
+    .className('pro')
+  const image = builder
+    .create('div')
+    .className('image')
+    .appendTo(pro)
+  builder
+    .create('img')
+    .src(imageurl)
+    .appendTo(image)
+  builder
+    .create('p')
+    .className('name')
+    .text(username)
+    .appendTo(pro)
+  return pro
+}
+
+function cardPoints(point) {
+  const points = builder
+    .create('div')
+    .className('points')
+  const p = builder
+    .create('p')
+    .text('Total Points: ')
+    .appendTo(points)
+  builder
+    .create('span')
+    .className('count')
+    .text(point)
+    .appendTo(p)
+  builder
+    .create('span')
+    .className('like')
+    .text('👍')
+    .appendTo(p)
+  builder
+    .create('span')
+    .className('dislike')
+    .text('👎')
+    .appendTo(p)
+  return points
+}
+
+function cardTop(username, imageurl, point) {
+  const top = builder
+    .create('div')
+    .className('top')
+  cardPro(username, imageurl).appendTo(top)
+  cardPoints(point).appendTo(top)
+  return top
+}
+function cardBottom(text, date) {
+  const bottom = builder
+    .create('div')
+    .className('bottom')
+  builder
+    .create('p')
+    .className('text')
+    .text(text)
+    .appendTo(bottom)
+  builder
+    .create('p')
+    .className('date')
+    .text(date)
+    .appendTo(bottom)
+  return bottom
+}
+
 function card({ id, text, username, imageurl, date, point }) {
-  const comment = builder.create('div').className('comment').id(id)
-  const top = builder.create('div').className('top').appendTo(comment)
-  const pro = builder.create('div').className('pro').appendTo(top)
-  const image = builder.create('div').className('image').appendTo(pro)
-  builder.create('img').src(imageurl).appendTo(image)
-  builder.create('p').className('name').text(username).appendTo(pro)
-  const points = builder.create('div').className('points').appendTo(top)
-  const p = builder.create('p').text('Total Points: ').appendTo(points)
-  builder.create('span').className('count').text(point).appendTo(p)
-  builder.create('span').className('like').text('👍').appendTo(p)
-  builder.create('span').className('dislike').text('👎').appendTo(p)
-  const bottom = builder.create('div').className('bottom').appendTo(comment)
-  builder.create('p').className('text').text(text).appendTo(bottom)
-  builder.create('p').className('date').text(date).appendTo(bottom)
+  const comment = builder
+    .create('div')
+    .className('comment')
+    .id(id)
+  cardTop(username, imageurl, point).appendTo(comment)
+  cardBottom(text, date).appendTo(comment)
   return comment
 }
 
