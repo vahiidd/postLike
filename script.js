@@ -1,8 +1,13 @@
-function ElementBuilder(name) {
+function ElementBuilder (name) {
   this.element = document.createElement(name)
 
   this.text = function (text) {
     this.element.textContent = text
+    return this
+  }
+
+  this.html = function (htmlValue) {
+    this.element.innerHTML = htmlValue
     return this
   }
 
@@ -43,10 +48,10 @@ function ElementBuilder(name) {
 const builder = {
   create: function (name) {
     return new ElementBuilder(name)
-  },
+  }
 }
 
-function Comments() {
+function Comments () {
   this.records = [
     {
       id: '1',
@@ -56,7 +61,7 @@ function Comments() {
       imageurl:
         'https://media-cdn.tripadvisor.com/media/photo-l/01/2e/70/9e/avatar069.jpg',
       date: 'January 2020',
-      point: 11,
+      point: 11
     },
     {
       id: '2',
@@ -66,7 +71,7 @@ function Comments() {
       imageurl:
         'https://media-cdn.tripadvisor.com/media/photo-l/01/2e/70/55/avatar028.jpg',
       date: 'Jan 2020',
-      point: 14,
+      point: 14
     },
     {
       id: '3',
@@ -76,15 +81,48 @@ function Comments() {
       imageurl:
         'https://media-cdn.tripadvisor.com/media/photo-l/01/2e/70/74/avatar056.jpg',
       date: 'Dec 2020',
-      point: 11,
-    },
+      point: 11
+    }
   ]
+
+  this.pointStatus = {}
+  this.records.forEach(item => {
+    this.pointStatus[item.id] = 0
+  })
+
+  function error (type) {
+    if (type === 'like') alert('you already like it')
+    else if (type === 'dislike') alert('you already dislike it')
+  }
+
+  this.like = function (id) {
+    if (this.pointStatus[id] < 1) {
+      const index = this.records.findIndex(item => item.id === id)
+      this.records[index].point++
+      this.pointStatus[id]++
+      return true
+    } else {
+      error('like')
+      return false
+    }
+  }
+  this.dislike = function (id) {
+    if (this.pointStatus[id] > -1) {
+      const index = this.records.findIndex(item => item.id === id)
+      this.records[index].point--
+      this.pointStatus[id]--
+      return true
+    } else {
+      error('dislike')
+      return false
+    }
+  }
 }
 
-function Painter(root) {
-  this.comments = new Comments();
+function Painter (root) {
+  this.comments = new Comments()
 
-  function cardPro (username, imageurl) {
+  const cardPro = (username, imageurl) => {
     const pro = builder
       .create('div')
       .className('pro')
@@ -104,28 +142,7 @@ function Painter(root) {
     return pro
   }
 
-  function error (type) {
-    alert(`you already ${type} it`)
-  }
-
-  this.click = function (operator, point, count) {
-    const n = +count.getText()
-    if (operator === 'like') {
-      if (n > point) {
-        this.error('like')
-        return
-      }
-      count.text(n + 1)
-    } else if (operator === 'dislike') {
-      if (n < point) {
-        this.error('dislike')
-        return
-      }
-      count.text(n - 1)
-    }
-  }
-
-  function cardPoints (point) {
+  const cardPoints = (point, id) => {
     const points = builder
       .create('div')
       .className('points')
@@ -133,7 +150,7 @@ function Painter(root) {
       .create('p')
       .text('Total Points: ')
       .appendTo(points)
-    const count = builder
+    builder
       .create('span')
       .className('count')
       .text(point)
@@ -142,27 +159,31 @@ function Painter(root) {
       .create('span')
       .className('like')
       .text('👍')
-      .onClick(() => this.click('like', point, count))
+      .onClick(() => {
+        if (this.comments.like(id)) this.render()
+      })
       .appendTo(p)
     builder
       .create('span')
       .className('dislike')
       .text('👎')
-      .onClick(() => this.click('dislike', point, count))
+      .onClick(() => {
+        if (this.comments.dislike(id)) this.render()
+      })
       .appendTo(p)
     return points
   }
 
-  function cardTop (username, imageurl, point) {
+  const cardTop = (username, imageurl, point, id) => {
     const top = builder
       .create('div')
       .className('top')
     cardPro(username, imageurl).appendTo(top)
-    cardPoints(point).appendTo(top)
+    cardPoints(point, id).appendTo(top)
     return top
   }
 
-  function cardBottom (text, date) {
+  const cardBottom = (text, date) => {
     const bottom = builder
       .create('div')
       .className('bottom')
@@ -178,20 +199,22 @@ function Painter(root) {
       .appendTo(bottom)
     return bottom
   }
-  function card ({ id, text, username, imageurl, date, point }) {
+  const card = ({ id, text, username, imageurl, date, point }) => {
     const comment = builder
       .create('div')
       .className('comment')
       .id(id)
-    cardTop(username, imageurl, point).appendTo(comment)
+    cardTop(username, imageurl, point, id).appendTo(comment)
     cardBottom(text, date).appendTo(comment)
     return comment
   }
 
   this.render = function () {
+    root.innerHTML = ''
     const container = builder
       .create('div')
       .className('container')
+      .html('')
       .appendTo(root)
     this.comments.records.forEach((item) => card(item).appendTo(container))
   }
