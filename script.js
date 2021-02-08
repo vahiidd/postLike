@@ -84,7 +84,7 @@ function Comments() {
 function Painter(root) {
   this.comments = new Comments();
 
-  this.cardPro = function (username, imageurl) {
+  function cardPro (username, imageurl) {
     const pro = builder
       .create('div')
       .className('pro')
@@ -104,7 +104,7 @@ function Painter(root) {
     return pro
   }
 
-  this.error = function (type) {
+  function error (type) {
     alert(`you already ${type} it`)
   }
 
@@ -125,7 +125,7 @@ function Painter(root) {
     }
   }
 
-  this.cardPoints = function (point) {
+  function cardPoints (point) {
     const points = builder
       .create('div')
       .className('points')
@@ -153,16 +153,16 @@ function Painter(root) {
     return points
   }
 
-  this.cardTop = function (username, imageurl, point) {
+  function cardTop (username, imageurl, point) {
     const top = builder
       .create('div')
       .className('top')
-    this.cardPro(username, imageurl).appendTo(top)
-    this.cardPoints(point).appendTo(top)
+    cardPro(username, imageurl).appendTo(top)
+    cardPoints(point).appendTo(top)
     return top
   }
 
-  this.cardBottom = function (text, date) {
+  function cardBottom (text, date) {
     const bottom = builder
       .create('div')
       .className('bottom')
@@ -178,18 +178,18 @@ function Painter(root) {
       .appendTo(bottom)
     return bottom
   }
-  this.card = function ({ id, text, username, imageurl, date, point }) {
+  function card ({ id, text, username, imageurl, date, point }) {
     const comment = builder
       .create('div')
       .className('comment')
       .id(id)
-    this.cardTop(username, imageurl, point).appendTo(comment)
-    this.cardBottom(text, date).appendTo(comment)
+    cardTop(username, imageurl, point).appendTo(comment)
+    cardBottom(text, date).appendTo(comment)
     return comment
   }
 
   this.render = function () {
-    const commentList = this.comments.records.map((item) => this.card(item))
+    const commentList = this.comments.records.map((item) => card(item))
     const container = builder
       .create('div')
       .className('container')
