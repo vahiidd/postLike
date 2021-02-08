@@ -67,3 +67,12 @@
   right: 10px;
 }
 
+.like {
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.dislike {
+  cursor: pointer;
+  margin-left: 5px;
+}
