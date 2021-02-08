@@ -30,7 +30,7 @@
   align-items: center;
   justify-content: space-around;
   padding-top: 8px;
-  width: 22%;
+  width: 30%;
 }
 
 .comment .top .pro .image img {
@@ -49,6 +49,7 @@
 
 .comment .top .pro .name {
   display: inline-block;
+  font-weight: bold;
 }
 
 .comment .bottom {
