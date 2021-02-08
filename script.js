@@ -189,12 +189,11 @@ function Painter(root) {
   }
 
   this.render = function () {
-    const commentList = this.comments.records.map((item) => card(item))
     const container = builder
       .create('div')
       .className('container')
       .appendTo(root)
-    commentList.forEach((item) => item.appendTo(container))
+    this.comments.records.forEach((item) => card(item).appendTo(container))
   }
 }
 
