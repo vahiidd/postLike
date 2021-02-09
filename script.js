@@ -117,6 +117,10 @@ function Comments() {
       return false
     }
   }
+  this.delete = function (id) {
+    const index = this.records.findIndex((item) => item.id === id)
+    this.records.splice(index, 1)
+  }
 }
 
 function Painter(root) {
@@ -155,6 +159,15 @@ function Painter(root) {
 
   const cardTop = (username, imageurl, point, id) => {
     const top = builder.create('div').className('top')
+    builder
+      .create('div')
+      .className('delete')
+      .text('x')
+      .onClick(() => {
+        this.comments.delete(id)
+        this.render()
+      })
+      .appendTo(top)
     cardPro(username, imageurl).appendTo(top)
     cardPoints(point, id).appendTo(top)
     return top
