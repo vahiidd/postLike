@@ -1,4 +1,4 @@
-function ElementBuilder (name) {
+function ElementBuilder(name) {
   this.element = document.createElement(name)
 
   this.text = function (text) {
@@ -51,7 +51,7 @@ const builder = {
   }
 }
 
-function Comments () {
+function Comments() {
   this.records = [
     {
       id: '1',
@@ -85,21 +85,21 @@ function Comments () {
     }
   ]
 
-  this.pointStatus = {}
-  this.records.forEach(item => {
-    this.pointStatus[item.id] = 0
+  const pointStatus = {}
+  this.records.forEach((item) => {
+    pointStatus[item.id] = 0
   })
 
-  function error (type) {
+  function error(type) {
     if (type === 'like') alert('you already like it')
     else if (type === 'dislike') alert('you already dislike it')
   }
 
   this.like = function (id) {
-    if (this.pointStatus[id] < 1) {
-      const index = this.records.findIndex(item => item.id === id)
+    if (pointStatus[id] < 1) {
+      const index = this.records.findIndex((item) => item.id === id)
       this.records[index].point++
-      this.pointStatus[id]++
+      pointStatus[id]++
       return true
     } else {
       error('like')
@@ -107,10 +107,10 @@ function Comments () {
     }
   }
   this.dislike = function (id) {
-    if (this.pointStatus[id] > -1) {
-      const index = this.records.findIndex(item => item.id === id)
+    if (pointStatus[id] > -1) {
+      const index = this.records.findIndex((item) => item.id === id)
       this.records[index].point--
-      this.pointStatus[id]--
+      pointStatus[id]--
       return true
     } else {
       error('dislike')
@@ -119,42 +119,21 @@ function Comments () {
   }
 }
 
-function Painter (root) {
+function Painter(root) {
   this.comments = new Comments()
 
   const cardPro = (username, imageurl) => {
-    const pro = builder
-      .create('div')
-      .className('pro')
-    const image = builder
-      .create('div')
-      .className('image')
-      .appendTo(pro)
-    builder
-      .create('img')
-      .src(imageurl)
-      .appendTo(image)
-    builder
-      .create('p')
-      .className('name')
-      .text(username)
-      .appendTo(pro)
+    const pro = builder.create('div').className('pro')
+    const image = builder.create('div').className('image').appendTo(pro)
+    builder.create('img').src(imageurl).appendTo(image)
+    builder.create('p').className('name').text(username).appendTo(pro)
     return pro
   }
 
   const cardPoints = (point, id) => {
-    const points = builder
-      .create('div')
-      .className('points')
-    const p = builder
-      .create('p')
-      .text('Total Points: ')
-      .appendTo(points)
-    builder
-      .create('span')
-      .className('count')
-      .text(point)
-      .appendTo(p)
+    const points = builder.create('div').className('points')
+    const p = builder.create('p').text('Total Points: ').appendTo(points)
+    builder.create('span').className('count').text(point).appendTo(p)
     builder
       .create('span')
       .className('like')
@@ -175,35 +154,20 @@ function Painter (root) {
   }
 
   const cardTop = (username, imageurl, point, id) => {
-    const top = builder
-      .create('div')
-      .className('top')
+    const top = builder.create('div').className('top')
     cardPro(username, imageurl).appendTo(top)
     cardPoints(point, id).appendTo(top)
     return top
   }
 
   const cardBottom = (text, date) => {
-    const bottom = builder
-      .create('div')
-      .className('bottom')
-    builder
-      .create('p')
-      .className('text')
-      .text(text)
-      .appendTo(bottom)
-    builder
-      .create('p')
-      .className('date')
-      .text(date)
-      .appendTo(bottom)
+    const bottom = builder.create('div').className('bottom')
+    builder.create('p').className('text').text(text).appendTo(bottom)
+    builder.create('p').className('date').text(date).appendTo(bottom)
     return bottom
   }
   const card = ({ id, text, username, imageurl, date, point }) => {
-    const comment = builder
-      .create('div')
-      .className('comment')
-      .id(id)
+    const comment = builder.create('div').className('comment').id(id)
     cardTop(username, imageurl, point, id).appendTo(comment)
     cardBottom(text, date).appendTo(comment)
     return comment
