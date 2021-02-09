@@ -3,7 +3,7 @@
   align-items: center;
 }
 
-.comment {
+.card {
   width: 60%;
   height: 200px;
   margin: auto;
@@ -13,7 +13,7 @@
   overflow: hidden;
 }
 
-.comment .top {
+.card .top {
   height: 100px;
   width: 100%;
   position: relative;
@@ -22,7 +22,7 @@
   align-items: center;
 }
 
-.comment .top .delete {
+.card .top .delete {
   background-color: red;
   color: #fff;
   width: 20px;
@@ -34,11 +34,11 @@
   cursor: pointer;
 }
 
-.comment .top .points {
+.card .top .points {
   width: 22%;
 }
 
-.comment .top .pro {
+.card .top .pro {
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -46,13 +46,13 @@
   width: 30%;
 }
 
-.comment .top .pro .image img {
+.card .top .pro .image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.comment .top .pro .image {
+.card .top .pro .image {
   display: inline-block;
   width: 80px;
   height: 80px;
@@ -60,22 +60,22 @@
   overflow: hidden;
 }
 
-.comment .top .pro .name {
+.card .top .pro .name {
   display: inline-block;
   font-weight: bold;
 }
 
-.comment .bottom {
+.card .bottom {
   height: 100px;
   width: 100%;
   position: relative;
 }
 
-.comment .bottom .text {
+.card .bottom .text {
   padding: 7px;
 }
 
-.comment .bottom .date {
+.card .bottom .date {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -89,4 +89,31 @@
 .dislike {
   cursor: pointer;
   margin-left: 5px;
+}
+
+.add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add .addImage {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+}
+
+.add .addImage img {
+  width: 100%;
+  height: 100%;
+}
+
+.wrap {
+  margin: 15px 5px;
+  display: inline-block;
+}
+
+.wrap textarea {
+  width: 600px;
+  height: 50px;
 }

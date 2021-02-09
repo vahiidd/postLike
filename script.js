@@ -1,6 +1,26 @@
 function ElementBuilder(name) {
   this.element = document.createElement(name)
 
+  this.id = function (id) {
+    this.element.id = id
+    return this
+  }
+
+  this.forId = function (id) {
+    this.element.for = id
+    return this
+  }
+
+  this.value = function (value) {
+    this.element.value = value
+    return this
+  }
+
+  this.type = function (type) {
+    this.element.type = type
+    return this
+  }
+
   this.text = function (text) {
     this.element.textContent = text
     return this
@@ -15,11 +35,6 @@ function ElementBuilder(name) {
     return this.element.textContent
   }
 
-  this.id = function (id) {
-    this.element.type = id
-    return this
-  }
-
   this.src = function (src) {
     this.element.src = src
     return this
@@ -27,6 +42,11 @@ function ElementBuilder(name) {
 
   this.className = function (name) {
     this.element.className = name
+    return this
+  }
+
+  this.onSubmit = function (fn) {
+    this.element.onsubmit = fn
     return this
   }
 
@@ -121,9 +141,14 @@ function Comments() {
     const index = this.records.findIndex((item) => item.id === id)
     this.records.splice(index, 1)
   }
+  this.addPost = function (post) {
+    this.records.push(post)
+    pointStatus[post.id] = 0
+  }
 }
 
 function Painter(root) {
+  let mode = 'view'
   this.comments = new Comments()
 
   const cardPro = (username, imageurl) => {
@@ -180,10 +205,67 @@ function Painter(root) {
     return bottom
   }
   const card = ({ id, text, username, imageurl, date, point }) => {
-    const comment = builder.create('div').className('comment').id(id)
+    const comment = builder.create('div').className('card').id(id)
     cardTop(username, imageurl, point, id).appendTo(comment)
     cardBottom(text, date).appendTo(comment)
     return comment
+  }
+
+  const addCard = () => {
+    const add = builder.create('div').className('card add')
+    const image = builder
+      .create('div')
+      .className('addImage')
+      .onClick(() => {
+        mode = 'input'
+        this.render()
+      })
+      .appendTo(add)
+    builder.create('img').src('./images/add.png').appendTo(image)
+    return add
+  }
+
+  const formSubmit = (e) => {
+    e.preventDefault()
+
+    const newPost = {
+      username: e.target[0].value || 'Unknown',
+      imageurl: e.target[1].value || './images/placeholder_male1.png',
+      text:
+        e.target[2].value ||
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+      date: e.target[3].value || 'Feb 2021',
+      point: 0,
+      id: Math.random().toString()
+    }
+
+    this.comments.addPost(newPost)
+    mode = 'view'
+    this.render()
+  }
+
+  const inputCard = () => {
+    const input = builder.create('div').className('card')
+    const form = builder
+      .create('form')
+      .onSubmit((e) => {
+        formSubmit(e)
+      })
+      .appendTo(input)
+    const wrap1 = builder.create('div').className('wrap').appendTo(form)
+    builder.create('label').forId('username').text('username: ').appendTo(wrap1)
+    builder.create('input').id('username').type('text').appendTo(wrap1)
+    const wrap2 = builder.create('div').className('wrap').appendTo(form)
+    builder.create('label').forId('imageurl').text('imageurl: ').appendTo(wrap2)
+    builder.create('input').id('imageurl').type('text').appendTo(wrap2)
+    const wrap3 = builder.create('div').className('wrap').appendTo(form)
+    builder.create('label').forId('text: ').text('text: ').appendTo(wrap3)
+    builder.create('textarea').id('text').appendTo(wrap3)
+    const wrap4 = builder.create('div').className('wrap').appendTo(form)
+    builder.create('label').forId('date').text('date: ').appendTo(wrap4)
+    builder.create('input').id('date').type('text').appendTo(wrap4)
+    builder.create('input').type('submit').value('add').appendTo(form)
+    return input
   }
 
   this.render = function () {
@@ -193,7 +275,14 @@ function Painter(root) {
       .className('container')
       .html('')
       .appendTo(root)
+
     this.comments.records.forEach((item) => card(item).appendTo(container))
+
+    if (mode === 'view') {
+      addCard().appendTo(container)
+    } else if (mode === 'input') {
+      inputCard().appendTo(container)
+    }
   }
 }
 
