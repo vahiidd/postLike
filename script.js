@@ -244,6 +244,21 @@ function Painter(root) {
     this.render()
   }
 
+  const wrapInput = (element, id) => {
+    const wrap = builder
+      .create('div')
+      .className('wrap')
+    builder
+      .create('label')
+      .forId(id).text(`${id}: `)
+      .appendTo(wrap)
+    builder
+      .create(element)
+      .id(id).type('text')
+      .appendTo(wrap)
+    return wrap
+  }
+
   const inputCard = () => {
     const input = builder.create('div').className('card')
     const form = builder
@@ -252,18 +267,10 @@ function Painter(root) {
         formSubmit(e)
       })
       .appendTo(input)
-    const wrap1 = builder.create('div').className('wrap').appendTo(form)
-    builder.create('label').forId('username').text('username: ').appendTo(wrap1)
-    builder.create('input').id('username').type('text').appendTo(wrap1)
-    const wrap2 = builder.create('div').className('wrap').appendTo(form)
-    builder.create('label').forId('imageurl').text('imageurl: ').appendTo(wrap2)
-    builder.create('input').id('imageurl').type('text').appendTo(wrap2)
-    const wrap3 = builder.create('div').className('wrap').appendTo(form)
-    builder.create('label').forId('text: ').text('text: ').appendTo(wrap3)
-    builder.create('textarea').id('text').appendTo(wrap3)
-    const wrap4 = builder.create('div').className('wrap').appendTo(form)
-    builder.create('label').forId('date').text('date: ').appendTo(wrap4)
-    builder.create('input').id('date').type('text').appendTo(wrap4)
+    wrapInput('input', 'username').appendTo(form)
+    wrapInput('input', 'imageurl').appendTo(form)
+    wrapInput('textarea', 'text').appendTo(form)
+    wrapInput('input', 'date').appendTo(form)
     builder.create('input').type('submit').value('add').appendTo(form)
     return input
   }
