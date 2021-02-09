@@ -1,5 +1,25 @@
-function ElementBuilder (name) {
+function ElementBuilder(name) {
   this.element = document.createElement(name)
+
+  this.id = function (id) {
+    this.element.id = id
+    return this
+  }
+
+  this.forId = function (id) {
+    this.element.for = id
+    return this
+  }
+
+  this.value = function (value) {
+    this.element.value = value
+    return this
+  }
+
+  this.type = function (type) {
+    this.element.type = type
+    return this
+  }
 
   this.text = function (text) {
     this.element.textContent = text
@@ -15,11 +35,6 @@ function ElementBuilder (name) {
     return this.element.textContent
   }
 
-  this.id = function (id) {
-    this.element.type = id
-    return this
-  }
-
   this.src = function (src) {
     this.element.src = src
     return this
@@ -27,6 +42,11 @@ function ElementBuilder (name) {
 
   this.className = function (name) {
     this.element.className = name
+    return this
+  }
+
+  this.onSubmit = function (fn) {
+    this.element.onsubmit = fn
     return this
   }
 
@@ -51,7 +71,7 @@ const builder = {
   }
 }
 
-function Comments () {
+function Comments() {
   this.records = [
     {
       id: '1',
@@ -85,21 +105,21 @@ function Comments () {
     }
   ]
 
-  this.pointStatus = {}
-  this.records.forEach(item => {
-    this.pointStatus[item.id] = 0
+  const pointStatus = {}
+  this.records.forEach((item) => {
+    pointStatus[item.id] = 0
   })
 
-  function error (type) {
+  function error(type) {
     if (type === 'like') alert('you already like it')
     else if (type === 'dislike') alert('you already dislike it')
   }
 
   this.like = function (id) {
-    if (this.pointStatus[id] < 1) {
-      const index = this.records.findIndex(item => item.id === id)
+    if (pointStatus[id] < 1) {
+      const index = this.records.findIndex((item) => item.id === id)
       this.records[index].point++
-      this.pointStatus[id]++
+      pointStatus[id]++
       return true
     } else {
       error('like')
@@ -107,54 +127,42 @@ function Comments () {
     }
   }
   this.dislike = function (id) {
-    if (this.pointStatus[id] > -1) {
-      const index = this.records.findIndex(item => item.id === id)
+    if (pointStatus[id] > -1) {
+      const index = this.records.findIndex((item) => item.id === id)
       this.records[index].point--
-      this.pointStatus[id]--
+      pointStatus[id]--
       return true
     } else {
       error('dislike')
       return false
     }
   }
+  this.delete = function (id) {
+    const index = this.records.findIndex((item) => item.id === id)
+    this.records.splice(index, 1)
+  }
+  this.addPost = function (post) {
+    this.records.push(post)
+    pointStatus[post.id] = 0
+  }
 }
 
-function Painter (root) {
+function Painter(root) {
+  let mode = 'view'
   this.comments = new Comments()
 
   const cardPro = (username, imageurl) => {
-    const pro = builder
-      .create('div')
-      .className('pro')
-    const image = builder
-      .create('div')
-      .className('image')
-      .appendTo(pro)
-    builder
-      .create('img')
-      .src(imageurl)
-      .appendTo(image)
-    builder
-      .create('p')
-      .className('name')
-      .text(username)
-      .appendTo(pro)
+    const pro = builder.create('div').className('pro')
+    const image = builder.create('div').className('image').appendTo(pro)
+    builder.create('img').src(imageurl).appendTo(image)
+    builder.create('p').className('name').text(username).appendTo(pro)
     return pro
   }
 
   const cardPoints = (point, id) => {
-    const points = builder
-      .create('div')
-      .className('points')
-    const p = builder
-      .create('p')
-      .text('Total Points: ')
-      .appendTo(points)
-    builder
-      .create('span')
-      .className('count')
-      .text(point)
-      .appendTo(p)
+    const points = builder.create('div').className('points')
+    const p = builder.create('p').text('Total Points: ').appendTo(points)
+    builder.create('span').className('count').text(point).appendTo(p)
     builder
       .create('span')
       .className('like')
@@ -175,38 +183,96 @@ function Painter (root) {
   }
 
   const cardTop = (username, imageurl, point, id) => {
-    const top = builder
+    const top = builder.create('div').className('top')
+    builder
       .create('div')
-      .className('top')
+      .className('delete')
+      .text('x')
+      .onClick(() => {
+        this.comments.delete(id)
+        this.render()
+      })
+      .appendTo(top)
     cardPro(username, imageurl).appendTo(top)
     cardPoints(point, id).appendTo(top)
     return top
   }
 
   const cardBottom = (text, date) => {
-    const bottom = builder
-      .create('div')
-      .className('bottom')
-    builder
-      .create('p')
-      .className('text')
-      .text(text)
-      .appendTo(bottom)
-    builder
-      .create('p')
-      .className('date')
-      .text(date)
-      .appendTo(bottom)
+    const bottom = builder.create('div').className('bottom')
+    builder.create('p').className('text').text(text).appendTo(bottom)
+    builder.create('p').className('date').text(date).appendTo(bottom)
     return bottom
   }
   const card = ({ id, text, username, imageurl, date, point }) => {
-    const comment = builder
-      .create('div')
-      .className('comment')
-      .id(id)
+    const comment = builder.create('div').className('card').id(id)
     cardTop(username, imageurl, point, id).appendTo(comment)
     cardBottom(text, date).appendTo(comment)
     return comment
+  }
+
+  const addCard = () => {
+    const add = builder.create('div').className('card add')
+    const image = builder
+      .create('div')
+      .className('addImage')
+      .onClick(() => {
+        mode = 'input'
+        this.render()
+      })
+      .appendTo(add)
+    builder.create('img').src('./images/add.png').appendTo(image)
+    return add
+  }
+
+  const formSubmit = (e) => {
+    e.preventDefault()
+
+    const newPost = {
+      username: e.target[0].value || 'Unknown',
+      imageurl: e.target[1].value || './images/placeholder_male1.png',
+      text:
+        e.target[2].value ||
+        'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+      date: e.target[3].value || 'Feb 2021',
+      point: 0,
+      id: Math.random().toString()
+    }
+
+    this.comments.addPost(newPost)
+    mode = 'view'
+    this.render()
+  }
+
+  const wrapInput = (element, id) => {
+    const wrap = builder
+      .create('div')
+      .className('wrap')
+    builder
+      .create('label')
+      .forId(id).text(`${id}: `)
+      .appendTo(wrap)
+    builder
+      .create(element)
+      .id(id).type('text')
+      .appendTo(wrap)
+    return wrap
+  }
+
+  const inputCard = () => {
+    const input = builder.create('div').className('card')
+    const form = builder
+      .create('form')
+      .onSubmit((e) => {
+        formSubmit(e)
+      })
+      .appendTo(input)
+    wrapInput('input', 'username').appendTo(form)
+    wrapInput('input', 'imageurl').appendTo(form)
+    wrapInput('textarea', 'text').appendTo(form)
+    wrapInput('input', 'date').appendTo(form)
+    builder.create('input').type('submit').value('add').appendTo(form)
+    return input
   }
 
   this.render = function () {
@@ -216,7 +282,14 @@ function Painter (root) {
       .className('container')
       .html('')
       .appendTo(root)
+
     this.comments.records.forEach((item) => card(item).appendTo(container))
+
+    if (mode === 'view') {
+      addCard().appendTo(container)
+    } else if (mode === 'input') {
+      inputCard().appendTo(container)
+    }
   }
 }
 
